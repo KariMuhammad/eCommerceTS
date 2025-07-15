@@ -1,5 +1,27 @@
 Link API: https://documenter.getpostman.com/view/23054100/2sAXqv61r7
 
+### Overview
+This project is a robust, scalable backend API for an ecommerce platform, built with Node.js and TypeScript. It provides a comprehensive set of RESTful endpoints to manage users, authentication, products, brands, categories, blogs, wishlists, ratings, coupons, orders, carts, and more.
+
+**Key features include**:
+- Secure authentication and authorization (JWT-based)
+- User management with roles and permissions
+- Product catalog with categories, brands, and advanced filtering
+- Shopping cart and order management
+- Wishlist and product ratings functionality
+- Blog and blog category management
+- Coupon and discount system
+- File uploads (with planned support for cloud storage)
+- Modular, maintainable code structure with validation layers and error handling
+
+The API is designed for easy integration with frontend clients (web, mobile, etc.) and follows best practices for scalability.
+
+
+> I created simple *prompt tool* (`slave.ts`) to create for me features with (controller, routes, repository, services, models, types) if needed.
+
+
+### API Endpoints Samples
+
 ## Authentication Functionalities
 
 | Method | Endpoint                        | Description                   | Status |
@@ -9,10 +31,7 @@ Link API: https://documenter.getpostman.com/view/23054100/2sAXqv61r7
 | POST   | /auth/logout                    | Logout a user                 | ✅     |
 | POST   | /auth/forgot-password           | Send a password reset email   | ✅     |
 | POST   | /auth/reset-password            | Reset a user's password       | ✅     |
-| POST   | /auth/verify-email              | Verify a user's email address | ❌     |
-| POST   | /auth/resend-verification-email | Resend a verification email   | ❌     |
 | POST   | /auth/change-password           | Change a user's password      | ✅     |
-| POST   | /auth/change-email              | Change a user's email address | ❌     |
 | POST   | /auth/refresh                   | Refresh a user's token        | ✅     |
 
 #### TODOS
@@ -66,12 +85,12 @@ Link API: https://documenter.getpostman.com/view/23054100/2sAXqv61r7
 | GET    | /products/:id | Get a product    | ✅     |
 | POST   | /products     | Create a product | ✅     |
 | PATCH  | /products/:id | Update a product | ✅     |
-| DELETE | /products/:id | Delete a product | ❌     |
+| DELETE | /products/:id | Delete a product | ✅     |
 
 #### TODOS
 
 - Add Ratings and Reviews [✅]
-- Validation Layer [❌]
+- Validation Layer [✅]
 
 ## Blogs Functionalities
 
@@ -87,7 +106,7 @@ Link API: https://documenter.getpostman.com/view/23054100/2sAXqv61r7
 
 #### TODOS
 
-- Add Validations Layer before Controller [❌]
+- Add Validations Layer before Controller [✅]
 - Add Check for User if owner who update or delete [❌]
 
 ## Wishlist Functionalities
@@ -127,7 +146,7 @@ Link API: https://documenter.getpostman.com/view/23054100/2sAXqv61r7
 | POST   | /coupons         | Create a coupon | ✅     |
 | PATCH  | /coupons/:id     | Update a coupon | ✅     |
 | DELETE | /coupons/:id     | Delete a coupon | ✅     |
-| POST   | /coupons/:id/use | Use a coupon    | ❌     |
+| POST   | /coupons/:id/use | Use a coupon    | ✅     |
 
 | Header Key    | Header Value   | Description  | Status |
 | ------------- | -------------- | ------------ | ------ |
