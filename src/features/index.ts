@@ -11,15 +11,23 @@ import blogs from "./blogs/route";
 import wishlist from "./wishlist/route";
 import coupon from "./coupons/route";
 import cart from "./carts/route";
+import contact from "./contact/route";
+import colors from "./colors/route";
+import orders from "./orders/route";
+import blogCategory from "./blog-category/route";
 
 router.use("/users", user);
 router.use("/auth", auth);
 router.use("/brands", brands);
 router.use("/category", category);
+router.use("/colors", colors);
 router.use("/products", products);
 router.use("/blogs", blogs);
 router.use("/wishlist", wishlist);
 router.use("/coupons", coupon);
 router.use("/cart", cart);
+router.use("/orders", orders);
+router.use("/contact", contact);
+router.use("/blog-category", blogCategory)
 
 export default router;

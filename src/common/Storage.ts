@@ -125,6 +125,12 @@ class Storage {
    */
 
   // TODO: Add Uploading into Cloudinary
+
+  /**
+   * @description atomic method
+   * @param fileFields
+   * @returns
+   */
   prepareUploadFiles = (fileFields: multer.Field[]): RequestHandler => {
     console.log("Fields", fileFields);
 
@@ -135,8 +141,10 @@ class Storage {
       if (!req.files || Object.values(req.files).length === 0) return next();
 
       const promisfyOperations = fileFields.map((field) => {
-        const fileCount = field.maxCount;
-        const files: Express.Multer.File[] = req.files[field.name];
+        const { name, maxCount } = field;
+
+        const fileCount = maxCount;
+        const files: Express.Multer.File[] = req.files[name];
 
         console.log("Files", files);
 
@@ -213,7 +221,7 @@ class Storage {
   filterFiles(req: Request, file: Express.Multer.File, callback) {
     const { mimetype, size } = file;
 
-    const allowedMimeTypes = ["image/jpeg", "image/png"];
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/avif"];
     const allowedSize = 1024 * 1024 * 2;
 
     if (!allowedMimeTypes.includes(mimetype))

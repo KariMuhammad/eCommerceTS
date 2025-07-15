@@ -17,6 +17,14 @@ router.post(
   AuthController.register
 );
 
+// Endpoint for create admin vendor user
+router.post(
+  "/register-admin",
+  guardMiddleware.reverseGuard(),
+  AuthValidations.getInstance().register(),
+  AuthController.registerVendor
+);
+
 router.post("/login", guardMiddleware.reverseGuard(), AuthController.login);
 
 // ===================== Protected Route =====================

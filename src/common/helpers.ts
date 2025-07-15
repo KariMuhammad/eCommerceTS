@@ -54,8 +54,10 @@ export const customMessage =
 export const uploadIntoCloudinary = (() => {
   v2.config(config.cloudinary);
   return async (file: Express.Multer.File) => {
-    // console.log("Cloudinary File", file);
-    // console.log("File Path", file.path);
+    /**
+     * console.log("Cloudinary File", file);
+     * console.log("File Path", file.path);
+     */
 
     // ``, ${Storage.destination}/${file.filename}
     return new Promise((resolve, reject) => {
@@ -78,7 +80,7 @@ export const uploadIntoCloudinary = (() => {
   };
 })(); // IIFE
 
-/**
+/** [1]
  * @description if storage's kind of `memory` then it will generate `filename` + `ext` for each file
  * and check if destination exists so move file to existing destination by `sharp`, if not exist, create destination by `fs`.
  *
@@ -101,6 +103,11 @@ export const handleStorageForMemoryStorage = (files: Express.Multer.File[]) => {
   });
 };
 
+/**
+ * [2]
+ * @param files
+ * @returns
+ */
 export const handleStorageByCloudinary = async (
   files: Express.Multer.File[]
 ) => {

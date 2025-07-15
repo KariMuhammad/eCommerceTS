@@ -9,6 +9,152 @@ import ProductModel from "../model";
 class ProductValidations extends Validations {
   private mutate(isUpdate = false) {
     return [
+      // Convert and validate price
+      body("price")
+        .if(() => !isUpdate)
+        .notEmpty()
+        .withMessage("'price' is required")
+        .bail()
+        .customSanitizer((value) => {
+          // Convert string to number for FormData
+          const num = parseFloat(value);
+          return isNaN(num) ? value : num;
+        })
+        .isFloat({ min: 0 })
+        .withMessage("'price' must be a positive number")
+        .bail(),
+
+      // Convert and validate quantity
+      body("quantity")
+        .if(() => !isUpdate)
+        .notEmpty()
+        .withMessage("'quantity' is required")
+        .bail()
+        .customSanitizer((value) => {
+          // Convert string to integer for FormData
+          const num = parseInt(value);
+          return isNaN(num) ? value : num;
+        })
+        .isInt({ min: 1 })
+        .withMessage("'quantity' must be a positive number")
+        .bail(),
+
+      // Parse and validate images array
+      body("images")
+        .if(() => !isUpdate)
+        .notEmpty()
+        .withMessage("'images' is required")
+        .bail()
+        .customSanitizer((value) => {
+          // Handle FormData array parsing
+          if (typeof value === 'string') {
+            try {
+              return JSON.parse(value);
+            } catch {
+              // If it's not JSON, treat as single item array
+              return [value];
+            }
+          }
+
+          // Content-Type if JSON
+          return Array.isArray(value) ? value : [value];
+        })
+        .isArray()
+        .withMessage("'images' must be an array")
+        .custom((images) => {
+          if (!Array.isArray(images)) {
+            throw ErrorAPI.badRequest("'images' must be an array");
+          }
+          
+          images.forEach((image, index) => {
+            if (!image) {
+              throw ErrorAPI.badRequest(`Image at index ${index} is required`);
+            }
+          });
+
+          return true;
+        }),
+
+      // Parse and validate colors array
+      body("colors")
+        .if(() => !isUpdate)
+        .optional()
+        .customSanitizer((value) => {
+          // Handle FormData array parsing
+          if (typeof value === 'string') {
+            try {
+              return JSON.parse(value);
+            } catch {
+              return []; // TODO: Check Will return array in all cases?
+            }
+          }
+
+          // Content-Type if JSON
+          return Array.isArray(value) ? value : [];
+        })
+        .isArray().isLength({ min: 1 })
+        .withMessage("'colors' must be an array")
+        .custom((colors) => {
+          if (!Array.isArray(colors)) {
+            throw ErrorAPI.badRequest("Colors is not an array!");
+          }
+
+          colors.forEach((color, index) => {
+            if (!color.name || !color.hexCode || !color.quantity) {
+              throw ErrorAPI.badRequest(
+                `Color at index ${index} must have name, hexCode, and quantity`
+              );
+            }
+            
+            // Convert quantity to number
+            const quantity = parseInt(color.quantity);
+            if (isNaN(quantity) || quantity < 0) {
+              throw ErrorAPI.badRequest(
+                `Color quantity at index ${index} must be a positive number`
+              );
+            }
+          });
+
+          return true;
+        }),
+
+      // Parse and validate tags array
+      body("tags")
+        .if(() => !isUpdate)
+        .notEmpty()
+        .withMessage("'tags' is required")
+        .bail()
+        .customSanitizer((value) => {
+          // Handle FormData array parsing
+          if (typeof value === 'string') {
+            try {
+              return JSON.parse(value);
+            } catch {
+              // If it's not JSON, treat as single item array
+              return [value];
+            }
+          }
+
+          // Content-Type if JSON
+          return Array.isArray(value) ? value : [value];
+        })
+        .isArray()
+        .withMessage("'tags' must be an array")
+        .custom((tags) => {
+          if (!Array.isArray(tags)) {
+            throw ErrorAPI.badRequest("'tags' must be an array");
+          }
+
+          tags.forEach((tag, index) => {
+            if (!tag) {
+              throw ErrorAPI.badRequest(`Tag at index ${index} is required`);
+            }
+          });
+
+          return true;
+        }),
+
+      // Validate name (after price and quantity to avoid conflicts)
       body("name")
         .if(() => !isUpdate)
         .notEmpty()
@@ -25,42 +171,17 @@ class ProductValidations extends Validations {
           return true;
         }),
 
+      // Validate description
       body("description")
         .if(() => !isUpdate)
         .notEmpty()
         .withMessage("'description' is required")
         .bail()
-        .isLength({ min: 50, max: 200 })
-        .withMessage("'description' length (min: 50, max: 200)")
+        .isLength({ min: 50 })
+        .withMessage("'description' length (min: 50, max: inf)")
         .bail(),
 
-      body("price")
-        .if(() => !isUpdate)
-        .notEmpty()
-        .withMessage("'price' is required")
-        .bail()
-        .isFloat({ min: 0 })
-        .withMessage("'price' must be a positive number")
-        .bail(),
-
-      body("quantity")
-        .if(() => !isUpdate)
-        .notEmpty()
-        .withMessage("'quantity' is required")
-        .bail()
-        .isInt({ min: 1 })
-        .withMessage("'quantity' must be a positive number")
-        .bail(),
-
-      body("sold")
-        .if(() => !isUpdate)
-        .notEmpty()
-        .withMessage("'sold' is required")
-        .bail()
-        .isInt({ min: 0 })
-        .withMessage("'sold' must be a positive number")
-        .bail(),
-
+      // Validate category
       body("category")
         .if(() => !isUpdate)
         .notEmpty()
@@ -73,6 +194,7 @@ class ProductValidations extends Validations {
           return true;
         }),
 
+      // Validate brand
       body("brand")
         .if(() => !isUpdate)
         .notEmpty()
@@ -84,37 +206,7 @@ class ProductValidations extends Validations {
           return true;
         }),
 
-      body("images")
-        .if(() => !isUpdate)
-        .isArray()
-        .withMessage("'images' must be an array"),
-
-      body("colors")
-        .if(() => !isUpdate)
-        .optional()
-        .isArray()
-        .withMessage("'colors' must be an array")
-        .custom((value) => {
-          console.log(value);
-
-          if (!value["name"] || !value["hexCode"] || !value["quantity"])
-            throw ErrorAPI.badRequest(
-              "Please Enter Valid Color value (name, hexCode, quantity)!"
-            );
-
-          return true;
-        }),
-
-      body("tags")
-        .if(() => !isUpdate)
-        .isArray()
-        .withMessage("'tags' must be an array"),
-
-      // body("ratings")
-      //   .if(() => !isUpdate)
-      //   .isArray()
-      //   .withMessage("'ratings' must be an array"),
-
+      // Cleanup images on validation failure
       body("images").custom((images: string[], { req }) => {
         if (!validationResult(req).isEmpty()) {
           console.log("----images----", images);

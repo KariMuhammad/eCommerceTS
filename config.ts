@@ -9,6 +9,10 @@ export default {
   root: root,
   static: "./static/public",
 
+  cors: {
+    origin: process.env.CORS_ORIGIN,
+  },
+
   db_uri: process.env.DB_ATLAS_URI,
   db_name: process.env.DB_NAME,
 

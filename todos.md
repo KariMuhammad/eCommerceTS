@@ -85,3 +85,56 @@ TS + Mongoose: https://mongoosejs.com/docs/typescript/statics-and-methods.html
 
 - Add Validations Layer before Controller [❌]
 - Add Check for User if owner who update or delete [❌]
+
+## Orders Functionalities
+
+| Method | Endpoint    | Description     | Status |
+| ------ | ----------- | --------------- | ------ |
+| GET    | /orders     | Get all orders  | ✅     |
+| GET    | /orders/:id | Get an order    | ✅     |
+| POST   | /orders     | Create an order | ✅     |
+| PATCH  | /orders/:id | Update an order | ✅     |
+| DELETE | /orders/:id | Delete an order | ✅     |
+
+#### TODOS
+
+## Carts Functionalities
+
+| Method | Endpoint   | Description   | Status |
+| ------ | ---------- | ------------- | ------ |
+| GET    | /carts     | Get all carts | ✅     |
+| GET    | /carts/:id | Get a cart    | ✅     |
+| POST   | /carts     | Create a cart | ✅     |
+| PATCH  | /carts/:id | Update a cart | ✅     |
+| DELETE | /carts/:id | Delete a cart | ✅     |
+
+#### TODOS
+
+## Vendors Functionalities
+
+| Method | Endpoint       | Description     | Status |
+| ------ | -------------- | --------------- | ------ |
+| GET    | /vendors       | Get all vendors | ❌     |
+| GET    | /vendors/:id   | Get a vendor    | ❌     |
+| POST   | /ask-be-vendor | Create a vendor | ❌     |
+| PATCH  | /vendors/:id   | Update a vendor | ❌     |
+| DELETE | /vendors/:id   | Delete a vendor | ❌     |
+
+#### TODOS
+
+## Admin Functionalities
+
+| Method | Endpoint           | Description     | Status |
+| ------ | ------------------ | --------------- | ------ |
+| GET    | /admin/users       | Get all users   | ❌     |
+| GET    | /admin/users/:id   | Get a user      | ❌     |
+| POST   | /admin/users       | Create a user   | ❌     |
+| PATCH  | /admin/users/:id   | Update a user   | ❌     |
+| DELETE | /admin/users/:id   | Delete a user   | ❌     |
+| GET    | /admin/vendors     | Get all vendors | ❌     |
+| GET    | /admin/vendors/:id | Get a vendor    | ❌     |
+| POST   | /admin/vendors     | Create a vendor | ❌     |
+| PATCH  | /admin/vendors/:id | Update a vendor | ❌     |
+| DELETE | /admin/vendors/:id | Delete a vendor | ❌     |
+
+#### TODOS

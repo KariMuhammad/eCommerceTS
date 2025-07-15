@@ -22,7 +22,7 @@ class ErrorHandler {
         errors = ErrorHandler.handleProd(incomingErrors);
       }
 
-      return response.status(errors.statusCode).json({ errors: errors });
+      return response.status(errors.statusCode).json({ errors });
     };
   }
 
@@ -45,13 +45,22 @@ class ErrorHandler {
 
   static unhandledPromiseRejection() {
     process.on("unhandledRejection", (error: Error) => {
-      console.log("Unhandled Promise Rejection: ", error);
+      console.error("❌ Unhandled Promise Rejection:", error);
+      console.error("Stack trace:", error.stack);
+      
+      // Don't exit immediately for database connection issues
+      if (error.message.includes('buffering timed out') || 
+          error.message.includes('MongooseError') ||
+          error.message.includes('MongoNetworkError')) {
+        console.error("Database connection issue detected. Check your database connection and try again.");
+      }
+      
       process.exit(1);
     });
   }
   static uncaughtException() {
     process.on("uncaughtException", (error: Error) => {
-      console.log("Uncaught Exception: ", error);
+      console.error("❌ Uncaught Exception: ", error);
       process.exit(1);
     });
   }

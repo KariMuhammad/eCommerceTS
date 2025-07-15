@@ -150,6 +150,8 @@ class UserController {
       addresses: user.addresses,
     });
   });
+
+  // Business Logics
 }
 
 export default new UserController();

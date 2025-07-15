@@ -2,8 +2,7 @@ import { FieldValidationError, validationResult } from "express-validator";
 import ErrorAPI, { ErrorType } from "./ErrorAPI";
 
 class Validations {
-  protected throwMethod: (message: string, errors?: ErrorType[]) => ErrorAPI =
-    ErrorAPI.badRequest;
+  protected throwMethod = ErrorAPI.badRequest;
 
   protected validate() {
     return (req, res, next) => {
@@ -18,6 +17,7 @@ class Validations {
         }));
 
         console.log(errors);
+        // return next(this.throwMethod("Validation Error", errors));
         return next(this.throwMethod("Validation Error", errors));
       }
 
@@ -26,7 +26,7 @@ class Validations {
   }
 
   public static getInstance() {
-    return new Validations();
+    return new this();
   }
 }
 

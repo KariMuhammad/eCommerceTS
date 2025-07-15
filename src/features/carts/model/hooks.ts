@@ -15,8 +15,16 @@ CartSchema.pre("save", async function (next) {
 
   console.log("Cart is existing already!");
 
+  console.log("Real Price of Products", this.populate);
   // increase quantity or add new product in existing cart
-  const realProducts = await this.populate("products.product", "price");
+  const realProducts = await this.populate({
+    path: "products",
+    populate: {
+      path: "product",
+      // select: "category", with "select" doesn't work, i dunno know why
+    },
+  });
+
   const totalPrice = realProducts.products.reduce(
     (acc, item) => acc + (item.product as IProduct).price * item.quantity,
     0

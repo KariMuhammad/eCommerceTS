@@ -17,3 +17,9 @@ export const REFRESH_TOKEN = {
     maxAge: 3 * 24 * 60 * 60 * 1000,
   },
 };
+
+export enum RefundStatus {
+  PENDING = "PENDING",
+  APPROVED = "APPROVED",
+  REJECTED = "REJECTED",
+}

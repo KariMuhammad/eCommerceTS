@@ -1,6 +1,13 @@
 import slugify from "slugify";
 import CategorySchema from "./schema";
 import CategoryModel from ".";
+import config from "../../../../config";
+
+CategorySchema.post("init", function () {
+  if (this.image) {
+    this.image = `${config.cloudinary.resource_link}/${this.image}`
+  }
+})
 
 CategorySchema.pre("validate", function (next) {
   if (this.isModified("name")) {

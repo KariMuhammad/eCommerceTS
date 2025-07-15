@@ -1,6 +1,7 @@
 import express, { Application } from "express";
 import cookiesParser from "cookie-parser";
 import morgran from "morgan";
+import cors from "cors";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -20,7 +21,10 @@ class App {
   }
 
   private setupDatabase() {
-    connectDatabase();
+    connectDatabase().catch(error => {
+      console.error(error.message);
+      process.exit(1);
+    });
   }
 
   private setupStandardMiddlewares() {
@@ -29,6 +33,15 @@ class App {
     App.app.use("/static", express.static(`${config.static}`));
     App.app.use(cookiesParser());
     App.app.use(morgran("dev"));
+    App.app.use(
+      // to enable frontend to access backend
+      cors({
+        origin: config.cors.origin || "*",
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+      })
+    );
   }
   private setupRoutesMiddlewares() {
     App.app.use("/", apps);

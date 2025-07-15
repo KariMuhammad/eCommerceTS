@@ -14,7 +14,7 @@ export interface IUser {
   passwordResetVerified?: boolean;
 
   mobile?: string;
-  role: string;
+  role: "user" | "vendor" | "admin";
   status: boolean;
   refreshToken: string;
   wishlist: string[];

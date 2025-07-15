@@ -12,6 +12,7 @@ class GuardMiddlewares {
    */
   guard(): RequestHandler {
     return async (req: Request, res: Response, next: NextFunction) => {
+      console.log("Guard middleware is running...");
       const authorization = req.headers.authorization;
 
       // 1. Check if `headers` has Authorization field

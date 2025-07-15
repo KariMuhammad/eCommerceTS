@@ -1,6 +1,6 @@
 import fs from "fs";
 
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import ErrorAPI from "../../../common/ErrorAPI";
 import { apiResponse, catchAsync } from "../../../common/helpers";
 import UserRepository from "../../user/repository";
@@ -26,11 +26,28 @@ class UserController {
     }
   };
 
+  registerVendor = async (req: Request, res: Response, next) => {
+    try {
+      await this.userRepository.create({
+        ...req.body,
+        role: "vendor",
+      });
+
+      return response.status(201).json({
+        status: "success",
+        message: "Vendor Created Successfully!",
+      });
+    } catch (error) {
+      next(ErrorAPI.internal(error.message));
+    }
+  };
+
   login = async (req: Request, res: Response, next) => {
     try {
       const { email, password } = req.body;
 
       const user = await this.userRepository.readOne({ email });
+      if (!user) return next(ErrorAPI.notFound("Credentials is wrong!"));
 
       // we can separate this logic to middleware
       if (!JwtServices.isExpired(user.refreshToken))
@@ -45,7 +62,12 @@ class UserController {
 
       res.cookie(REFRESH_TOKEN.name, refreshToken, REFRESH_TOKEN.options);
 
-      return apiResponse(res, 200, "Login Successfully!", { token });
+      return apiResponse(res, 200, "Login Successfully!", {
+        token,
+        username: `${user.first_name} ${user.last_name}`,
+        email: user.email,
+        mobile: user.mobile,
+      });
 
       /**
        * AccessToken used directly by client users

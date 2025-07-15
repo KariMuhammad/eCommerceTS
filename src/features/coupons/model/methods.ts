@@ -13,7 +13,8 @@ CouponSchema.methods.use = async function (
 ) {
   if (this.isExpired()) {
     this.isActive = false;
-    // throw new Error("Coupon is expired");
+    //! throw new Error("Coupon is expired");
+    throw new Error("Coupon is expired");
     await this.save();
     return total;
   }

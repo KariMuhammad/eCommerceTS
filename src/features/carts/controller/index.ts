@@ -139,8 +139,11 @@ class CartController {
       return apiResponse(res, 200, "Cart is empty", { cart: null });
     }
 
+    console.log("Cart Products", cart.products);
     const productIndex = cart.products.findIndex((product) => {
-      return product.product === productId && product.color === color;
+      return (
+        product.product.toString() === productId && product.color === color
+      );
     });
 
     // TODO: Load the product from the database to get the price
