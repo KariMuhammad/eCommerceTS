@@ -15,7 +15,7 @@ ProductSchema.methods.updateAverageRatings = async function () {
 
 ProductSchema.methods.destroyImages = async function () {
   const promisfyOperations = this.images.map((image) => {
-    const fileNameImage = image.split(".")[0]; ///[digitic-blog-images/hsbcza9japfnvjrhkibb].png
+    const fileNameImage = image.public_id.split(".")[0]; ///[digitic-blog-images/hsbcza9japfnvjrhkibb].png
 
     console.log("Filename: " + fileNameImage);
     return destroyFileFromCloudinary(fileNameImage);

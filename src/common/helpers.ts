@@ -131,7 +131,7 @@ export const destroyFileFromCloudinary = (filePublicId: string) => {
   return v2.uploader
     .destroy(filePublicId, { type: "upload" })
     .then((result) => {
-      console.log("All files uploaded successfully to cloudinary", result);
+      console.log("deletion successful to cloudinary", result);
       return result;
     })
     .catch((error) => {

@@ -7,7 +7,7 @@ export interface IProduct {
   price: number;
   category: [Schema.Types.ObjectId];
   brand: Schema.Types.ObjectId;
-  images: string[];
+  images: {url: string; public_id: string}[];
   colors: [
     {
       name: string;

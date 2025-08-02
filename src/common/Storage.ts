@@ -8,6 +8,7 @@ import sharp from "sharp";
 import ErrorAPI from "./ErrorAPI";
 import config from "../../config";
 import {
+  destroyFileFromCloudinary,
   handleStorageByCloudinary,
   // handleStorageForMemoryStorage,
 } from "./helpers";
@@ -91,15 +92,21 @@ class Storage {
     return `.${ext || extFile}`;
   }
 
-  static removeImagesFromStorage(filesPaths: string[]) {
-    filesPaths.forEach((path) => {
-      const fullpath = `${this.destination}/${path}`;
+  removeImagesFromStorage(filesPaths: string[]) {
+    if (this.type === storageType.DISK) {
+      filesPaths.forEach((path) => {
+        const fullpath = `${Storage.destination}/${path}`;
+  
+        if (fs.existsSync(fullpath))
+          fs.unlink(fullpath, (err) => {
+            if (err) throw ErrorAPI.internal(err.message);
+          });
+      });
+    }
 
-      if (fs.existsSync(fullpath))
-        fs.unlink(fullpath, (err) => {
-          if (err) throw ErrorAPI.internal(err.message);
-        });
-    });
+    if (this.type === storageType.MEMORY) {
+      filesPaths.forEach((filePath) => destroyFileFromCloudinary(filePath))
+    }
   }
 
   static moveFileBySharp({
@@ -132,11 +139,11 @@ class Storage {
    * @returns
    */
   prepareUploadFiles = (fileFields: multer.Field[]): RequestHandler => {
-    console.log("Fields", fileFields);
+    // console.log("Fields", fileFields);
 
     return async (req: Request, _res: Response, next: NextFunction) => {
       // console.log("User", req.user);
-      console.log("Request Files", req.files);
+      // console.log("Request Files", req.files);
 
       if (!req.files || Object.values(req.files).length === 0) return next();
 
@@ -146,7 +153,7 @@ class Storage {
         const fileCount = maxCount;
         const files: Express.Multer.File[] = req.files[name];
 
-        console.log("Files", files);
+        // console.log("Files", files);
 
         /**
          * @description if storage is memory, then we need to move files to disk (by sharp package)
@@ -160,11 +167,15 @@ class Storage {
             (result: UploadApiResponse[]) => {
               // console.log("_Res", res);
               // console.log("_files", files);
+              console.log("Result", result);
 
               if (fileCount)
                 req.body[field.name] =
                   field.maxCount !== 1
-                    ? result.map((f) => `${f.public_id}.${f.format}`)
+                    ? result.map((f) => ({
+                      url: f.secure_url,
+                      public_id: `${f.public_id}.${f.format}`
+                    }))
                     : [`${result[0].public_id}.${result[0].format}`];
 
               console.log("Request Body", req.body);
@@ -181,8 +192,9 @@ class Storage {
 
         // just store location in request body (in case we use our disk as storage)
         // but if we want to upload images into cloudinary, we need more than location
-        console.log("Request Body", req.body);
-        console.log("Files", files);
+        
+        // console.log("Request Body", req.body);
+        // console.log("Files", files);
 
         if (this.type === storageType.DISK) {
           if (fileCount)

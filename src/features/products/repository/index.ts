@@ -4,12 +4,20 @@ import ProductModel from "../model";
 import { IProductDocument } from "../types";
 import { FilterQuery } from "mongoose";
 import QueryFeatures from "../../../common/QueryFeatures";
+import { catchAsync } from "../../../common/helpers";
 
 class ProductRepository extends Repository<IProductDocument> {
   constructor() {
     super(ProductModel);
   }
 
+
+  /**
+   * Return Data with Pagination format
+   * @param selector 
+   * @param request 
+   * @returns 
+   */
   async readWithQueryFeatures(
     selector: FilterQuery<IProductDocument>,
     request: Request
@@ -32,6 +40,11 @@ class ProductRepository extends Repository<IProductDocument> {
       query: enhanceQuery.mongooseQuery,
       pagination: enhanceQuery.pagination,
     };
+  }
+
+  async readBySlug(slug: string) {
+    const product = await super.readOne({ slug });
+    return { product };
   }
 }
 

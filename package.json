@@ -5,9 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
-    "dev": "npx ts-node server.ts",
+    "dev": "nodemon server.ts",
     "dev2": "ts-node-dev --respawn --transpile-only server.ts",
-    "start": "tsc && node dist/server.js",
+    "start": "node dist/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Karim Muhammad",

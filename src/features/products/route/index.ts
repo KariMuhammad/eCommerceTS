@@ -12,6 +12,8 @@ const router = new APIRouter();
 const storage = Storage.memoryStorage();
 const fileFields = storage.getFileFields({ images: 5 });
 
+router.getRouter().get("/s/:slug", ProductController.getBySlugProduct)
+
 router.resource("/", ProductController, {
   create: [
     guardMiddleware.guard(),
@@ -30,7 +32,7 @@ router.resource("/", ProductController, {
   delete: [guardMiddleware.guard(), guardMiddleware.only(["admin", "vendor"])],
 });
 
-router.getRouter().delete("/:productId/image", ProductController.deleteImage);
+// router.getRouter().delete("/:productId/image", ProductController.deleteImage);
 
 // Reviews & Ratings
 router.getRouter().use("/:productId", reviewsRoute);

@@ -30,7 +30,6 @@ class ProductController {
     const { data: products, pagination } =
       await this.productRepository.readWithQueryFeatures({}, req);
 
-    console.log("Products", products);
     return apiResponse(res, 200, "All Products fetched", {
       products,
       pagination,
@@ -48,6 +47,11 @@ class ProductController {
     console.log("UPDATE Product");
 
     const { body: data, params } = req;
+
+    if (data['images']) {
+
+    }
+
     const updatedProduct = await this.productRepository.update(
       { _id: params.id },
       data
@@ -60,33 +64,41 @@ class ProductController {
 
   delete = catchAsync(async (req: Request, res: Response) => {
     const product = await this.productRepository.delete({ _id: req.params.id });
+    console.log("Deleted Product", product);
+
     product.destroyImages();
     return apiResponse(res, 204, "Product deleted successfully!", { product });
   });
 
-  deleteImage = catchAsync(async (req: Request, res: Response) => {
-    const { productId } = req.params;
-    const { imageId } = req.body;
+  // deleteImage = catchAsync(async (req: Request, res: Response) => {
+  //   const { productId } = req.params;
+  //   const { imageId } = req.body;
 
-    await this.productRepository.update(
-      { _id: productId },
-      {},
-      { new: true },
-      {
-        $pull: { images: imageId },
-      }
-    );
+  //   await this.productRepository.update(
+  //     { _id: productId },
+  //     {},
+  //     { new: true },
+  //     {
+  //       $pull: { images: imageId },
+  //     }
+  //   );
 
-    await destroyFileFromCloudinary(imageId.split(".")[0])
-      .then((result) => {
-        console.log("Image deleted from cloudinary", result);
-        return apiResponse(res, 204, "Image deleted successfully!");
-      })
-      .catch((error) => {
-        console.error("Error deleting image from cloudinary:", error);
-        return apiResponse(res, 500, "Error deleting image from cloudinary");
-      });
-  });
+  //   await destroyFileFromCloudinary(imageId.split(".")[0])
+  //     .then((result) => {
+  //       console.log("Image deleted from cloudinary", result);
+  //       return apiResponse(res, 204, "Image deleted successfully!");
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error deleting image from cloudinary:", error);
+  //       return apiResponse(res, 500, "Error deleting image from cloudinary");
+  //     });
+  // });
+
+  getBySlugProduct = catchAsync(async (req: Request, res: Response) => {
+    const { slug } = req.params;
+    const product = await this.productRepository.readBySlug(slug);
+    return apiResponse(res, 200, "Product successfully returned", product)
+  })
 
   static getInstance = () => {
     if (!ProductController.instance)

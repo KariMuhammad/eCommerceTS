@@ -8,41 +8,41 @@ class CategoryValidations extends Validations {
         return [
 
             body("name")
-            .if(() => !isUpdate)
-            .notEmpty()
-            .withMessage("'name' is required")
-            .bail()
-            .isLength({ min: 3, max: 50 })
-            .withMessage("'name' length (min: 3, max: 50)")
-            .bail()
-            .custom(async (value) => {
-              const isExist = await CategoryModel.findOne({ name: value });
-              if (isExist)
-                throw ErrorAPI.badRequest("Product name is already be taken!");
-      
-              return true;
-            }),
-      
-          // Validate description
-          body("description")
-            .if(() => !isUpdate)
-            .notEmpty()
-            .withMessage("'description' is required")
-            .bail()
-            .isLength({ min: 50 })
-            .withMessage("'description' length (min: 50, max: inf)")
-            .bail(),
+                .if(() => !isUpdate)
+                .notEmpty()
+                .withMessage("'name' is required")
+                .bail()
+                .isLength({ min: 3, max: 50 })
+                .withMessage("'name' length (min: 3, max: 50)")
+                .bail()
+                .custom(async (value) => {
+                    const isExist = await CategoryModel.findOne({ name: value });
+                    if (isExist)
+                        throw ErrorAPI.badRequest("Product name is already be taken!");
+
+                    return true;
+                }),
+
+            // Validate description
+            body("description")
+                .if(() => !isUpdate)
+                .notEmpty()
+                .withMessage("'description' is required")
+                .bail()
+                .isLength({ min: 50 })
+                .withMessage("'description' length (min: 50, max: inf)")
+                .bail(),
 
             body("image")
-            .if(() => !isUpdate)
-            .customSanitizer((value, { req }) => {
-                if (Array.isArray(value))
-                    return value[0]
-                return value;
-            })
-            .notEmpty()
-            .withMessage("image field is required")
-            .bail()
+                .optional()
+                .customSanitizer((value, { req }) => {
+                    if (Array.isArray(value))
+                        return value[0]
+                    return value;
+                })
+                .notEmpty()
+                .withMessage("image field is required")
+                .bail()
         ]
     }
     create() {

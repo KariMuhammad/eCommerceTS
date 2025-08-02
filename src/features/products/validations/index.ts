@@ -46,16 +46,6 @@ class ProductValidations extends Validations {
         .withMessage("'images' is required")
         .bail()
         .customSanitizer((value) => {
-          // Handle FormData array parsing
-          if (typeof value === 'string') {
-            try {
-              return JSON.parse(value);
-            } catch {
-              // If it's not JSON, treat as single item array
-              return [value];
-            }
-          }
-
           // Content-Type if JSON
           return Array.isArray(value) ? value : [value];
         })
@@ -210,7 +200,7 @@ class ProductValidations extends Validations {
       body("images").custom((images: string[], { req }) => {
         if (!validationResult(req).isEmpty()) {
           console.log("----images----", images);
-          Storage.removeImagesFromStorage(images);
+          Storage.memoryStorage().removeImagesFromStorage(images);
         }
 
         return true;

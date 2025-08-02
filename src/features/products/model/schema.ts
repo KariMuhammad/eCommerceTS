@@ -41,7 +41,10 @@ const ProductSchema = new Schema<IProduct, IProductModel, IProductMethods>({
     required: true,
   },
 
-  images: [String],
+  images: [{
+    url: String,
+    public_id: String
+  }],
 
   colors: [
     {
