@@ -55,7 +55,7 @@ class ProductValidations extends Validations {
           if (!Array.isArray(images)) {
             throw ErrorAPI.badRequest("'images' must be an array");
           }
-          
+
           images.forEach((image, index) => {
             if (!image) {
               throw ErrorAPI.badRequest(`Image at index ${index} is required`);
@@ -95,7 +95,7 @@ class ProductValidations extends Validations {
                 `Color at index ${index} must have name, hexCode, and quantity`
               );
             }
-            
+
             // Convert quantity to number
             const quantity = parseInt(color.quantity);
             if (isNaN(quantity) || quantity < 0) {
@@ -150,8 +150,8 @@ class ProductValidations extends Validations {
         .notEmpty()
         .withMessage("'name' is required")
         .bail()
-        .isLength({ min: 3, max: 50 })
-        .withMessage("'name' length (min: 3, max: 50)")
+        .isLength({ min: 3, max: 100 })
+        .withMessage("'name' length (min: 3, max: 100)")
         .bail()
         .custom(async (value) => {
           const isExist = await ProductModel.findOne({ name: value });
@@ -197,10 +197,10 @@ class ProductValidations extends Validations {
         }),
 
       // Cleanup images on validation failure
-      body("images").custom((images: string[], { req }) => {
+      body("images").custom((images: { url: string, public_id: string }[], { req }) => {
         if (!validationResult(req).isEmpty()) {
           console.log("----images----", images);
-          Storage.memoryStorage().removeImagesFromStorage(images);
+          Storage.memoryStorage().removeImagesFromStorage(images?.map((image) => image.public_id) ?? []);
         }
 
         return true;

@@ -44,9 +44,9 @@ export const apiErrorResponse = (
 
 export const customMessage =
   (message: string) =>
-  (value: string, { path }: { path: string }) => {
-    return message.replace("{VALUE}", value).replace("{PATH}", path);
-  };
+    (value: string, { path }: { path: string }) => {
+      return message.replace("{VALUE}", value).replace("{PATH}", path);
+    };
 
 /**
  * @returns Promise<[secure_url, url, ...]> as Result of Upload Stream
@@ -128,6 +128,9 @@ export const handleStorageByCloudinary = async (
 };
 
 export const destroyFileFromCloudinary = (filePublicId: string) => {
+  console.log("File Public Id", filePublicId);
+  filePublicId = filePublicId.split(".")[0]; // files name ends with extention
+
   return v2.uploader
     .destroy(filePublicId, { type: "upload" })
     .then((result) => {
