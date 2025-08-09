@@ -336,7 +336,7 @@ This project has no license.
     Author: Karim Muhammad
   </p>
   <p>
-    Contact: <a href="mailto:your-email@example.com">your-email@example.com</a>
+    Contact: <a href="mailto:kimoomar005@gmail.com">kimoomar005@gmail.com</a>
   </p>
   <p>
     ⭐️ Consider giving the project a star on GitHub! ⭐️
