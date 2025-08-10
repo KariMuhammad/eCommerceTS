@@ -12,8 +12,8 @@ class UserController {
 
   read = async (req: Request, res: Response, next) => {
     try {
-      const data = await this.userRepository.read({});
-
+      const data = await this.userRepository.read({ _id: { $nin: req.user.id } });
+      // req.headersDistinct
       return res.status(200).json({ data });
     } catch (error) {
       next(ErrorAPI.badRequest(error.message));

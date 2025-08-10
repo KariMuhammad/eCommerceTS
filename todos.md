@@ -138,3 +138,5 @@ TS + Mongoose: https://mongoosejs.com/docs/typescript/statics-and-methods.html
 | DELETE | /admin/vendors/:id | Delete a vendor | ❌     |
 
 #### TODOS
+
+#### TODO: Functionalities for Image and handling duplication if needed

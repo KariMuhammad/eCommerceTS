@@ -39,7 +39,6 @@ const UserSchema = new Schema<IUserType, IUserModel, IUserMethods>({
 
   mobile: {
     type: String,
-    unique: true,
   },
 
   role: {

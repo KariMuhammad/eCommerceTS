@@ -26,7 +26,7 @@ class BlogController {
       ...req.body,
       author: req.user.id,
     });
-    return apiResponse(res, 201, "New blog is created!", { blog: newBlog });
+    return apiResponse(res, 201, "New blog is created!", newBlog);
   });
 
   read = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -47,7 +47,7 @@ class BlogController {
       const blog = await this.blogRepository.readOne({ _id: id });
       if (!blog) return next(ErrorAPI.notFound("No blog with this id!"));
 
-      return apiResponse(res, 200, "The blog fetched Successfully!", { blog });
+      return apiResponse(res, 200, "The blog fetched Successfully!", blog);
     }
   );
 
@@ -61,9 +61,7 @@ class BlogController {
 
       if (!updatedBlog) return next(ErrorAPI.notFound("No blog with this id!"));
 
-      return apiResponse(res, 200, "The blog updated Successfully!", {
-        blog: updatedBlog,
-      });
+      return apiResponse(res, 200, "The blog updated Successfully!", updatedBlog);
     }
   );
 

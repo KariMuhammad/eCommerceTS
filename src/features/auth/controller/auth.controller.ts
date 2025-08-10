@@ -47,6 +47,7 @@ class UserController {
       const { email, password } = req.body;
 
       const user = await this.userRepository.readOne({ email });
+      console.log("User", user, "body", email);
       if (!user) return next(ErrorAPI.notFound("Credentials is wrong!"));
 
       // we can separate this logic to middleware

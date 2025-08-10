@@ -4,10 +4,10 @@ import ProductModel from ".";
 import config from "../../../../config";
 
 ProductSchema.post("init", function () {
-  
-  // this.images = this.images.map(function (img) {
-  //   return { url: `${config.cloudinary.resource_link}/${img.public_id}`, public_id: img.public_id };
-  // });
+
+  this.images = this.images.map(function (img) {
+    return { url: `${config.cloudinary.resource_link}/${img.public_id}`, public_id: img.public_id };
+  });
 
   console.log("images", this.images);
 });

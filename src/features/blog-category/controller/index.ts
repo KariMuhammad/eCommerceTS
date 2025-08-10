@@ -36,13 +36,13 @@ class BlogCategoryController {
             return next(ErrorAPI.internal(error.message));
         }
     })
-    
+
     create = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { body } = req;
 
             const data = await this.blogCategoryRepository.create(body)
-            return  apiResponse(res, 201, "Blog Category created!", data);
+            return apiResponse(res, 201, "Blog Category created!", data);
         } catch (error) {
             return next(ErrorAPI.internal(error.message))
         }
@@ -51,7 +51,7 @@ class BlogCategoryController {
     delete = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
-            await this.blogCategoryRepository.delete({_id: id });
+            await this.blogCategoryRepository.delete({ _id: id });
             return apiResponse(res, 204, "Blog Category deleted!");
         } catch (error) {
             return next(ErrorAPI.internal(error.message))
@@ -63,7 +63,9 @@ class BlogCategoryController {
             const { id } = req.params;
             const data = req.body;
 
-            const newData = await this.blogCategoryRepository.update({_id: id }, data);
+            console.log("Body", data)
+
+            const newData = await this.blogCategoryRepository.update({ _id: id }, data);
             return apiResponse(res, 200, "Blog Category is updated", newData);
         } catch (error) {
             return next(ErrorAPI.internal(error.message));
