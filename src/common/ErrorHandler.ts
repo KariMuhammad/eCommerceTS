@@ -47,14 +47,14 @@ class ErrorHandler {
     process.on("unhandledRejection", (error: Error) => {
       console.error("❌ Unhandled Promise Rejection:", error);
       console.error("Stack trace:", error.stack);
-      
+
       // Don't exit immediately for database connection issues
-      if (error.message.includes('buffering timed out') || 
-          error.message.includes('MongooseError') ||
-          error.message.includes('MongoNetworkError')) {
+      if (error.message.includes('buffering timed out') ||
+        error.message.includes('MongooseError') ||
+        error.message.includes('MongoNetworkError')) {
         console.error("Database connection issue detected. Check your database connection and try again.");
       }
-      
+
       process.exit(1);
     });
   }

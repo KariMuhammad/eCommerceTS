@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { apiResponse, catchAsync } from "../../../common/helpers";
 import ProductRepository from "../../products/repository";
 import ErrorAPI from "../../../common/ErrorAPI";
+import ReviewModel from "../model";
 
 class RatingsController {
   private productRepository: ProductRepository;
@@ -12,22 +13,14 @@ class RatingsController {
   /**
    * @description Get all ratings of a product
    * @method GET
-   * @route /api/products/:productId/ratings
+   * @route /api/products/:productId?/reviews
    */
   read = catchAsync(async (req: Request, res: Response) => {
-    const { productId } = req.params;
+    const reviews = await ReviewModel.find(req.body || {})
+      .populate("user", "first_name last_name email")
+      .populate("product", "name images price")
 
-    const query = this.productRepository
-      .readOne({ _id: productId })
-      .populate("ratings.user", "first_name last_name email");
-
-    const { data, pagination } =
-      await this.productRepository.readWithQueryFeatures(query, req);
-
-    return apiResponse(res, 200, "Ratings fetched successfully", {
-      ratings: data.map((product) => product.ratings),
-      pagination,
-    });
+    return apiResponse(res, 200, "Fetched All Reviews", reviews);
   });
 
   /**
@@ -37,111 +30,86 @@ class RatingsController {
    */
   readOne = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
-      const { productId, id: ratingId } = req.params;
+      const { id } = req.params;
+      const query = { _id: id };
 
-      const product = await this.productRepository.readOne({
-        _id: productId,
-        "ratings._id": ratingId,
-      });
+      const { product } = req.body;
+      if (product) query["product"] = product;
 
-      if (!product) {
-        return next(ErrorAPI.notFound("Rating not found"));
-      }
+      const review = await ReviewModel.find(query)
+        .populate("product", "name price")
+        .populate("user", "first_name last_name email");
 
-      return apiResponse(res, 200, "Rating fetched successfully", {
-        rating: product.ratings[0],
-      });
+      return apiResponse(res, 200, "Review fetched successfully", review);
     }
   );
 
   /**
    * @description Create a new rating for a product
    * @method POST
-   * @route /api/products/:productId/ratings
+   * @route /api/products/:productId/reviews
    */
   create = catchAsync(async (req: Request, res: Response) => {
     console.log("Create Rating");
 
     const { user, body } = req;
-    const { productId } = req.params;
-    const { stars, review } = body;
+    const { stars, title, review, product } = body;
+
     console.log("User ID", user.id);
+    console.log("Product ID", product);
 
-    const rating = {
-      user: user.id,
-      stars,
-      review,
-    };
-
-    console.log("Product ID", productId);
-
-    const productRating = await this.productRepository.change({
-      selector: { _id: productId },
-      data: {},
-      update: {
-        $push: { ratings: rating },
-      },
+    const newReview = await ReviewModel.create({
+      ...body,
+      user: req.user.id
     });
 
-    return apiResponse(res, 201, "Rating created successfully", {
-      rating: productRating.ratings[productRating.ratings.length - 1],
-    });
+    return apiResponse(res, 201, "Review created successfully", newReview);
   });
 
   /**
    * @description Update a rating of a product
    * @method PATCH
-   * @route /api/products/:productId/ratings/:id
+   * @route /api/products/:productId/reviews/:id
    */
   update = catchAsync(async (req: Request, res: Response) => {
-    const { productId, id: ratingId } = req.params;
-    const { user, body } = req;
-    const { stars, review } = body;
+    const { user, body, params } = req;
 
-    const product = await this.productRepository.change({
-      selector: {
-        _id: productId,
-        "ratings._id": ratingId,
-        "ratings.user": user.id,
-      },
-      data: {},
-      update: {
-        $set: {
-          "ratings.$[rating].stars": stars,
-          "ratings.$[rating].review": review,
-        },
-      },
+    const { id: reviewId } = params;
+    const { product, ...data } = body;
 
-      options: {
-        arrayFilters: [{ "rating._id": ratingId }],
-      },
-    });
+    const updatedReview = await ReviewModel.findOneAndUpdate({
+      user: user.id,
+      _id: reviewId,
+      product: product ?? undefined
+    }, {
+      $set: data
+    }, { new: true })
 
-    return apiResponse(res, 200, "Rating updated successfully", {
-      product,
-    });
+    if (!updatedReview) {
+      throw ErrorAPI.notFound("Reivew is not exist!");
+    }
+
+    return apiResponse(res, 200, "Rating updated successfully", updatedReview);
   });
 
   /**
    * @description Delete a rating of a product
    * @method DELETE
-   * @route /api/products/:productId/ratings/:id
+   * @route /api/products/:productId/reviews/:id
    */
   delete = catchAsync(async (req: Request, res: Response) => {
-    const { productId, id: ratingId } = req.params;
-    const { user } = req;
+    const { user, body } = req;
+    const { id: reviewId } = req.params;
 
-    await this.productRepository.change({
-      selector: {
-        _id: productId,
-        "ratings.user": user.id,
-        "ratings._id": ratingId,
-      },
-      data: {},
-      update: {
-        $pull: { ratings: { _id: ratingId, user: user.id } },
-      },
-    });
+    const deletedReview = await ReviewModel.findOneAndDelete({
+      _id: reviewId,
+      user: user.id,
+      product: body.product ?? undefined
+    })
+
+    if (!deletedReview) {
+      throw ErrorAPI.notFound("Review is not exist!");
+    }
 
     return apiResponse(res, 204, "Rating deleted successfully");
   });

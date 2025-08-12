@@ -15,6 +15,7 @@ import contact from "./contact/route";
 import colors from "./colors/route";
 import orders from "./orders/route";
 import blogCategory from "./blog-category/route";
+import reviews from "./reviews/route";
 
 router.use("/users", user);
 router.use("/auth", auth);
@@ -29,5 +30,6 @@ router.use("/cart", cart);
 router.use("/orders", orders);
 router.use("/contact", contact);
 router.use("/blog-category", blogCategory)
+router.use("/", reviews)
 
 export default router;

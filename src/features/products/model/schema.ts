@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IProduct, IProductMethods, IProductModel } from "../types";
 
 const ProductSchema = new Schema<IProduct, IProductModel, IProductMethods>({
@@ -25,6 +25,26 @@ const ProductSchema = new Schema<IProduct, IProductModel, IProductMethods>({
     type: Number,
     required: true,
     min: 0,
+  },
+
+  discount: {
+    percentage: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+    startDate: {
+      type: Date,
+      default: Date.now
+    },
+    endDate: {
+      type: Date,
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   category: [
@@ -64,20 +84,7 @@ const ProductSchema = new Schema<IProduct, IProductModel, IProductMethods>({
     default: 0,
   },
 
-  ratings: [
-    {
-      stars: {
-        type: Number,
-        required: true,
-      },
-      user: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-      },
-      review: String,
-    },
-  ],
+  // ratings: [{ type: mongoose.Types.ObjectId }],
 
   averageRatings: {
     type: Number,
@@ -94,6 +101,25 @@ const ProductSchema = new Schema<IProduct, IProductModel, IProductMethods>({
       type: String,
     },
   ],
+}, { toJSON: { virtuals: true }, toObject: { virtuals: true } });
+
+// Virtual field to calculate discounted price (if using simple discount percentage)
+ProductSchema.virtual('discountedPrice').get(function () {
+  if (this.discount.percentage > 0) {
+    return this.price - (this.price * this.discount.percentage / 100);
+  }
+  return this.price;
 });
 
+// Virtual field to calculate savings amount
+ProductSchema.virtual('savingsAmount').get(function () {
+  if (this.discount.percentage > 0) {
+    return this.price * this.discount.percentage / 100;
+  }
+  return 0;
+});
+
+ProductSchema.virtual("availability").get(function () {
+  return this.quantity > 0;
+})
 export default ProductSchema;

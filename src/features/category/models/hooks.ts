@@ -30,18 +30,18 @@ CategorySchema.pre("findOneAndUpdate", function (next) {
   next();
 });
 
-CategorySchema.path("name").validate({
-  validator: async function (value) {
-    console.log("Path", value, "This", this);
+// CategorySchema.path("name").validate({
+//   validator: async function (value) {
+//     console.log("Path", value, "This", this);
 
-    const isNameExist = await CategoryModel.countDocuments({
-      name: { $eq: value },
-    });
+//     const isNameExist = await CategoryModel.countDocuments({
+//       name: { $eq: value },
+//     });
 
-    if (isNameExist) return false;
+//     if (isNameExist) return false;
 
-    return true;
-  },
+//     return true;
+//   },
 
-  message: "Category name already exists!",
-});
+//   message: "Category name already exists!",
+// });

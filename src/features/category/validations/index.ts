@@ -16,9 +16,11 @@ class CategoryValidations extends Validations {
                 .withMessage("'name' length (min: 3, max: 50)")
                 .bail()
                 .custom(async (value) => {
+                    // console.log("")
                     const isExist = await CategoryModel.findOne({ name: value });
+
                     if (isExist)
-                        throw ErrorAPI.badRequest("Product name is already be taken!");
+                        throw ErrorAPI.badRequest("Category name is already be taken!");
 
                     return true;
                 }),

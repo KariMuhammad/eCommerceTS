@@ -5,9 +5,18 @@ export interface IProduct {
   slug: string;
   description: string;
   price: number;
+  discount: {
+    percentage: number;
+    startDate: Date;
+    endDate: Date;
+    isActive: boolean;
+  }
+
+  discountedPrice?: number;
+  savingsAmount?: number;
   category: [Schema.Types.ObjectId];
   brand: Schema.Types.ObjectId;
-  images: {url: string; public_id: string}[];
+  images: { url: string; public_id: string }[];
   colors: [
     {
       name: string;
@@ -18,13 +27,14 @@ export interface IProduct {
 
   quantity: number;
   sold: number;
-  ratings: [
-    {
-      stars: number;
-      review: string;
-      user: Schema.Types.ObjectId;
-    }
-  ];
+
+  // ratings: [
+  //   {
+  //     stars: number;
+  //     review: string;
+  //     user: Schema.Types.ObjectId;
+  //   }
+  // ];
 
   averageRatings: number;
   reviewsCount: number;
@@ -37,7 +47,7 @@ export interface IProductMethods {
   destroyImages: () => Promise<void>;
 }
 
-export interface IProductDocument extends IProduct, Document, IProductMethods {}
+export interface IProductDocument extends IProduct, Document, IProductMethods { }
 
 export interface IProductModel extends Model<IProductDocument> {
   findBySlug(slug: string): Promise<IProductDocument | null>;

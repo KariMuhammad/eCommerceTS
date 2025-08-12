@@ -43,7 +43,7 @@ class ProductRepository extends Repository<IProductDocument> {
   }
 
   async readBySlug(slug: string) {
-    const product = await super.readOne({ slug });
+    const product = await (super.readOne({ slug }).populate("category", "name slug"));
     return { product };
   }
 }

@@ -96,7 +96,7 @@ class Storage {
     if (this.type === storageType.DISK) {
       filesPaths.forEach((path) => {
         const fullpath = `${Storage.destination}/${path}`;
-  
+
         if (fs.existsSync(fullpath))
           fs.unlink(fullpath, (err) => {
             if (err) throw ErrorAPI.internal(err.message);
@@ -192,7 +192,7 @@ class Storage {
 
         // just store location in request body (in case we use our disk as storage)
         // but if we want to upload images into cloudinary, we need more than location
-        
+
         // console.log("Request Body", req.body);
         // console.log("Files", files);
 
@@ -233,7 +233,7 @@ class Storage {
   filterFiles(req: Request, file: Express.Multer.File, callback) {
     const { mimetype, size } = file;
 
-    const allowedMimeTypes = ["image/jpeg", "image/png", "image/avif"];
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/avif", "image/webp"];
     const allowedSize = 1024 * 1024 * 2;
 
     if (!allowedMimeTypes.includes(mimetype))

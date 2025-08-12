@@ -39,7 +39,7 @@ class ProductController {
   readOne = catchAsync(async (req: Request, res: Response) => {
     const product = await this.productRepository.readOne({
       _id: req.params.id,
-    });
+    }).populate("category", "name");
     return apiResponse(res, 200, "Product fetched", { product });
   });
 
