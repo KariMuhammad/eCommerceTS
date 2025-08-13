@@ -6,8 +6,13 @@ import { setProductIdToBodyIfExist } from "../middleware/paramsMiddlewares";
 const router = new APIRouter({ mergeParams: true });
 
 
+// router.getRouter().get("/reviews/stats", RatingsController.getProductReviewsStats);
+
 router.resource("/reviews/", RatingsController, {
-  all: [guardMiddleware.guard(), setProductIdToBodyIfExist],
+  all: [setProductIdToBodyIfExist],
+  create: [guardMiddleware.guard()],
+  update: [guardMiddleware.guard()],
+  delete: [guardMiddleware.guard()]
 });
 
 export default router.getRouter();

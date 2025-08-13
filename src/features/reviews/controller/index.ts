@@ -3,12 +3,10 @@ import { apiResponse, catchAsync } from "../../../common/helpers";
 import ProductRepository from "../../products/repository";
 import ErrorAPI from "../../../common/ErrorAPI";
 import ReviewModel from "../model";
+import mongoose from "mongoose";
 
 class RatingsController {
-  private productRepository: ProductRepository;
-  constructor() {
-    this.productRepository = new ProductRepository();
-  }
+  constructor() { }
 
   /**
    * @description Get all ratings of a product
@@ -18,9 +16,15 @@ class RatingsController {
   read = catchAsync(async (req: Request, res: Response) => {
     const reviews = await ReviewModel.find(req.body || {})
       .populate("user", "first_name last_name email")
-      .populate("product", "name images price")
+      .populate("product", "name images price");
 
-    return apiResponse(res, 200, "Fetched All Reviews", reviews);
+    // TODO: Validation Layer for `productId` of parent route and `reviewId`
+
+    let stats = {};
+    if (req.body.product)
+      stats = await ReviewModel.getProductReviewStats(req.body.product);
+
+    return apiResponse(res, 200, "Fetched All Reviews", { reviews, stats });
   });
 
   /**
@@ -53,10 +57,17 @@ class RatingsController {
     console.log("Create Rating");
 
     const { user, body } = req;
-    const { stars, title, review, product } = body;
+    const { product } = body;
 
     console.log("User ID", user.id);
     console.log("Product ID", product);
+
+    // TODO: Validation Layer for `request.body`
+
+    // Check if User already wrote a review for same product
+    const review = await ReviewModel.find({ user: new mongoose.Types.ObjectId(user.id), product: new mongoose.Types.ObjectId(product) });
+    if (review)
+      throw ErrorAPI.badRequest("You already wrote a review in this product");
 
     const newReview = await ReviewModel.create({
       ...body,

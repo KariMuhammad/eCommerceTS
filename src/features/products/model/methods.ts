@@ -1,17 +1,17 @@
 import { destroyFileFromCloudinary } from "../../../common/helpers";
 import ProductSchema from "./schema";
 
-ProductSchema.methods.updateAverageRatings = async function () {
-  const ratings = this.ratings;
-  const ratingsCount = ratings.length;
-  let totalStars = 0;
+// ProductSchema.methods.updateAverageRatings = async function () {
+//   const ratings = this.ratings;
+//   const ratingsCount = ratings.length;
+//   let totalStars = 0;
 
-  ratings.forEach((rating) => {
-    totalStars += rating.stars;
-  });
+//   ratings.forEach((rating) => {
+//     totalStars += rating.stars;
+//   });
 
-  this.averageRatings = totalStars / ratingsCount;
-};
+//   this.averageRatings = totalStars / ratingsCount;
+// };
 
 ProductSchema.methods.destroyImages = async function () {
   const promisfyOperations = this.images.map((image) => {

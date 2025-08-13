@@ -36,14 +36,14 @@ export interface IProduct {
   //   }
   // ];
 
-  averageRatings: number;
-  reviewsCount: number;
+  // averageRatings: number;
+  // reviewsCount: number;
 
   tags: [string];
 }
 
 export interface IProductMethods {
-  updateAverageRatings: () => Promise<void>;
+  // updateAverageRatings: () => Promise<void>;
   destroyImages: () => Promise<void>;
 }
 

@@ -44,6 +44,8 @@ ReviewSchema.statics.getAllUserReviewsOfProduct = async function (productId: str
 };
 
 ReviewSchema.statics.getProductReviewStats = async function (productId: string): Promise<ReviewStats> {
+    console.log("Product ID", productId);
+
     try {
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             throw new Error('Invalid product ID');
