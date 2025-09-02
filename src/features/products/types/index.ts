@@ -36,8 +36,8 @@ export interface IProduct {
   //   }
   // ];
 
-  // averageRatings: number;
-  // reviewsCount: number;
+  averageRatings: number;
+  reviewsCount: number;
 
   tags: [string];
 }

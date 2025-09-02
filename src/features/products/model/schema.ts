@@ -86,14 +86,27 @@ const ProductSchema = new Schema<IProduct, IProductModel, IProductMethods>({
 
   // ratings: [{ type: mongoose.Types.ObjectId }],
 
-  // averageRatings: {
-  //   type: Number,
-  //   default: 0,
+  // TODO: AvgRatings & ReviewsCount
+  averageRatings: {
+    type: Number,
+    default: 0,
+  },
+
+  reviewsCount: {
+    type: Number,
+    default: 0,
+  },
+
+
+  // TODO: InWishList & InCart
+  // inWishlist: {
+  //   type: Boolean,
+  //   default: false,
   // },
 
-  // reviewsCount: {
-  //   type: Number,
-  //   default: 0,
+  // inCart: {
+  //   type: Boolean,
+  //   default: false,
   // },
 
   tags: [

@@ -30,7 +30,7 @@ class ProductRepository extends Repository<IProductDocument> {
       request.query
     )
       .all()
-      .search(["name"])
+      .search(["name"]) // Search by name only
       .paginate();
 
     const mongooseQueryResult = await enhanceQuery.mongooseQuery;

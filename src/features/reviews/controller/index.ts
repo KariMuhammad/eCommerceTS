@@ -6,7 +6,10 @@ import ReviewModel from "../model";
 import mongoose from "mongoose";
 
 class RatingsController {
-  constructor() { }
+  productRepository: ProductRepository;
+  constructor() {
+    this.productRepository = new ProductRepository();
+  }
 
   /**
    * @description Get all ratings of a product
@@ -53,7 +56,7 @@ class RatingsController {
    * @method POST
    * @route /api/products/:productId/reviews
    */
-  create = catchAsync(async (req: Request, res: Response) => {
+  create = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     console.log("Create Rating");
 
     const { user, body } = req;
@@ -65,14 +68,31 @@ class RatingsController {
     // TODO: Validation Layer for `request.body`
 
     // Check if User already wrote a review for same product
-    const review = await ReviewModel.find({ user: new mongoose.Types.ObjectId(user.id), product: new mongoose.Types.ObjectId(product) });
+    const review = await ReviewModel.findOne({ user: new mongoose.Types.ObjectId(user.id), product: new mongoose.Types.ObjectId(product) });
+
+    console.log("Review", review);
+
     if (review)
-      throw ErrorAPI.badRequest("You already wrote a review in this product");
+      return next(ErrorAPI.badRequest("You already wrote a review in this product"))
 
     const newReview = await ReviewModel.create({
       ...body,
       user: req.user.id
     });
+
+    // Update Avg Rating in Product Collection (Table)
+    const currentProduct = await this.productRepository.readOne({ _id: product });
+    const currentTotal = (currentProduct.averageRatings || 0) * (currentProduct.reviewsCount || 0);
+    const newTotal = currentTotal + newReview.stars;
+    const newCount = (currentProduct.reviewsCount || 0) + 1
+
+    // TODO: Execute when reviews will be approved, not directly
+    await this.productRepository.change({
+      selector: { _id: product }, update: {
+        $inc: { reviewsCount: 1 },
+        $set: { averageRatings: newTotal / newCount }
+      }
+    })
 
     return apiResponse(res, 201, "Review created successfully", newReview);
   });

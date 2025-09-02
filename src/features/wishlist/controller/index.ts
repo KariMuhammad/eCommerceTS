@@ -90,7 +90,9 @@ class WishlistController {
     const { user } = req;
     const products = await this.productRepository.read({
       _id: { $in: user.wishlist },
-    });
+    })
+      .populate("category", "name")
+      .select("-description -colors -brand -tags");
 
     return apiResponse(res, 200, "Wishlist fetched", { products });
   });
